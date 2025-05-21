@@ -15,16 +15,20 @@ import {
   FaChevronDown,
 } from "react-icons/fa";
 import Link from "next/link";
+import { apiGet } from "@/utils/api";
 
 interface DashboardData {
-  categories: number;
-  products: number;
   totalOrders: number;
-  delivered: number;
-  pending: number;
-  users: number;
-  totalAmount: number;
-  feedbacks: number;
+  totalUsers: number;
+  totalRevenue: number;
+  totalFoodItems: number;
+  ordersPerStatus: Record<string, number>;
+  topSellingItems: {
+    foodName: string;
+    quantitySold: number;
+  }[];
+  totalFeedbacks: number;
+  totalCategories: number;
 }
 
 export default function AdminDashboardPage() {
@@ -33,17 +37,7 @@ export default function AdminDashboardPage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [showDropdown, setShowDropdown] = useState(false);
-
-  const [data, setData] = useState<DashboardData>({
-    categories: 8,
-    products: 14,
-    totalOrders: 31,
-    delivered: 9,
-    pending: 22,
-    users: 7,
-    totalAmount: 6100,
-    feedbacks: 3,
-  });
+  const [data, setData] = useState<DashboardData | null>(null);
 
   useEffect(() => {
     if (user && !user.isAdmin) {
@@ -63,6 +57,19 @@ export default function AdminDashboardPage() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const stats = await apiGet<DashboardData>("/api/admin/dashboard/stats");
+        setData(stats);
+      } catch (err) {
+        console.error("Failed to load dashboard stats", err);
+      }
+    };
+
+    if (user?.isAdmin) fetchStats();
+  }, [user]);
 
   if (!user) return null;
 
@@ -98,49 +105,53 @@ export default function AdminDashboardPage() {
         <DashboardCard
           icon={<FaShoppingBasket className="text-blue-500 text-3xl" />}
           title="Categories"
-          value={data.categories}
+          value={data?.totalCategories ?? 0} 
           href="/admin/categories"
         />
+
         <DashboardCard
           icon={<FaHamburger className="text-red-400 text-3xl" />}
           title="Products"
-          value={data.products}
+          value={data?.totalFoodItems ?? 0}
           href="/admin/products"
         />
         <DashboardCard
           icon={<FaClipboardList className="text-green-600 text-3xl" />}
           title="Total Orders"
-          value={data.totalOrders}
+          value={data?.totalOrders ?? 0}
           href="/admin/orders"
         />
         <DashboardCard
           icon={<FaCheck className="text-yellow-500 text-3xl" />}
           title="Delivered Items"
-          value={data.delivered}
-          href="/admin/orders"
+          value={data?.ordersPerStatus?.Completed ?? 0}
+          href="/admin/delivered"
         />
         <DashboardCard
           icon={<FaClock className="text-orange-400 text-3xl" />}
           title="Pending Items"
-          value={data.pending}
-          href="/admin/orders"
+          value={data?.ordersPerStatus?.Pending ?? 0}
+          href="/admin/pending"
         />
         <DashboardCard
           icon={<FaUsers className="text-indigo-500 text-3xl" />}
           title="Users"
-          value={data.users}
+          value={data?.totalUsers ?? 0}
           href="/admin/users"
         />
         <DashboardCard
           icon={<FaMoneyBill className="text-green-500 text-3xl" />}
           title="Sold Amount"
-          value={`₹${data.totalAmount}`}
-          href="/admin/orders"
+          value={new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(data?.totalRevenue ?? 0)}
+          href="/admin/sold"
         />
         <DashboardCard
           icon={<FaComments className="text-yellow-500 text-3xl" />}
           title="Feedbacks"
-          value={data.feedbacks}
+          value={data?.totalFeedbacks ?? 0}
           href="/admin/contact"
         />
       </div>
@@ -166,7 +177,10 @@ function DashboardCard({
         <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
       </div>
       <div className="text-3xl font-bold text-gray-900 mb-4">{value}</div>
-      <Link href={href} className="text-sm text-blue-600 hover:underline mt-auto">
+      <Link
+        href={href}
+        className="text-sm text-blue-600 hover:underline mt-auto"
+      >
         View Details →
       </Link>
     </div>
