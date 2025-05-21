@@ -50,7 +50,8 @@ namespace MunchKing.Services.Authentication
                 Address = request.Address,
                 PostalCode = request.PostalCode,
                 MobileNumber = request.MobileNumber,
-                ProfileImageUrl = imageUrl
+                ProfileImageUrl = imageUrl,
+                CreatedAt = DateTime.UtcNow
             };
 
             var result = await _userManager.CreateAsync(user, request.Password);
