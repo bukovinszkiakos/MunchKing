@@ -32,16 +32,71 @@ namespace MunchKing.Controllers
 
         [Authorize(Roles = "Admin,SuperAdmin")]
         [HttpPost]
-        public async Task<IActionResult> Create(CategoryDto dto)
+        [RequestSizeLimit(5_000_000)] 
+        public async Task<IActionResult> Create([FromForm] IFormFile image, [FromForm] string name, [FromForm] bool isActive)
         {
+            if (image == null || image.Length == 0)
+                return BadRequest("Image is required.");
+
+            var fileName = $"{Guid.NewGuid()}_{image.FileName}";
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/categories");
+            Directory.CreateDirectory(folderPath); 
+
+            var filePath = Path.Combine(folderPath, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            var host = Request.Scheme + "://" + Request.Host.Value;
+            var imageUrl = $"{host}/uploads/categories/{fileName}";
+
+            var dto = new CategoryDto
+            {
+                Name = name,
+                ImageUrl = imageUrl,
+                IsActive = isActive
+            };
+
             var created = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         [Authorize(Roles = "Admin,SuperAdmin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, CategoryDto dto)
+        [RequestSizeLimit(5_000_000)] 
+        public async Task<IActionResult> Update(int id, [FromForm] IFormFile? image, [FromForm] string name, [FromForm] bool isActive)
         {
+            var category = await _service.GetByIdAsync(id);
+            if (category == null)
+                return NotFound();
+
+            string? imageUrl = category.ImageUrl;
+
+            if (image != null && image.Length > 0)
+            {
+                var fileName = $"{Guid.NewGuid()}_{image.FileName}";
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/categories");
+                Directory.CreateDirectory(folderPath);
+
+                var filePath = Path.Combine(folderPath, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+
+                var host = Request.Scheme + "://" + Request.Host.Value;
+                imageUrl = $"{host}/uploads/categories/{fileName}";
+            }
+
+            var dto = new CategoryDto
+            {
+                Id = id,
+                Name = name,
+                ImageUrl = imageUrl!,
+                IsActive = isActive
+            };
+
             await _service.UpdateAsync(id, dto);
             return NoContent();
         }
