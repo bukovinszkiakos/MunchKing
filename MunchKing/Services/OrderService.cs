@@ -112,6 +112,7 @@ namespace MunchKing.Services
                 PaymentMode = o.PaymentMode,
                 UserEmail = o.User?.Email ?? "N/A",
                 Username = o.User?.UserName ?? "N/A",
+                TotalAmount = o.OrderItems.Sum(oi => oi.UnitPrice * oi.Quantity), 
                 Items = o.OrderItems.Select(oi => new OrderItemDto
                 {
                     ProductName = oi.FoodItem.Name,
@@ -120,6 +121,7 @@ namespace MunchKing.Services
                     UnitPrice = oi.UnitPrice
                 }).ToList()
             }).ToList();
+
         }
 
         public async Task<List<OrderDto>> GetAllOrdersAsync()
