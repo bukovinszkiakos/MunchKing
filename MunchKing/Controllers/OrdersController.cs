@@ -5,6 +5,8 @@ using MunchKing.Models;
 using MunchKing.Services;
 using System.Security.Claims;
 using MunchKing.Enums;
+using Microsoft.EntityFrameworkCore;
+using MunchKing.Context;
 
 namespace MunchKing.Controllers
 {
@@ -15,11 +17,13 @@ namespace MunchKing.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly InvoiceService _invoiceService;
+        private readonly ApplicationDbContext _context;
 
-        public OrdersController(IOrderService orderService, InvoiceService invoiceService)
+        public OrdersController(IOrderService orderService, InvoiceService invoiceService, ApplicationDbContext context)
         {
             _orderService = orderService;
             _invoiceService = invoiceService;
+            _context = context;
         }
 
         [HttpPost("checkout")]
@@ -94,7 +98,30 @@ namespace MunchKing.Controllers
         }
 
 
-      
+        [HttpDelete("{orderId}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteOrder(int orderId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId);
+
+            if (order == null)
+                return NotFound(new { message = "Order not found or not authorized." });
+
+            _context.OrderItems.RemoveRange(order.OrderItems); 
+            _context.Orders.Remove(order);                     
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Order deleted successfully." });
+        }
+
+
+
+
 
 
 
