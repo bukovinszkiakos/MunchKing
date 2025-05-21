@@ -5,17 +5,20 @@ import { FaUser, FaShoppingCart } from "react-icons/fa";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 import burgerImage from "../../../public/burger.png";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { items } = useCart();
+
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const linkClass = (path: string) =>
     `uppercase cursor-pointer hover:text-yellow-400 ${
       pathname === path ? "text-yellow-400" : "text-white"
     }`;
-    
 
   return (
     <div className="fixed top-0 left-0 w-full h-20 z-50 text-white text-xl bg-black">
@@ -65,9 +68,11 @@ export default function Navbar() {
                 pathname === "/cart" ? "text-yellow-400" : "text-white"
               }`}
             />
-            <span className="absolute -top-2 -right-2 text-xs bg-yellow-400 text-black rounded-full px-1 font-bold">
-              0
-            </span>
+            {totalQuantity > 0 && (
+              <span className="absolute -top-2 -right-2 text-xs bg-yellow-400 text-black rounded-full px-2 font-bold">
+                {totalQuantity}
+              </span>
+            )}
           </Link>
 
           {user ? (
