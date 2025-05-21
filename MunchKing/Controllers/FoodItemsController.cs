@@ -59,21 +59,22 @@ namespace MunchKing.Controllers
             if (image == null || image.Length == 0)
                 return BadRequest("No file uploaded.");
 
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            if (!Directory.Exists(uploadsFolder))
-                Directory.CreateDirectory(uploadsFolder);
+            var folderPath = Path.Combine("wwwroot", "uploads", "products"); 
+            Directory.CreateDirectory(folderPath);
 
             var uniqueName = $"{Guid.NewGuid()}_{Path.GetFileName(image.FileName)}";
-            var filePath = Path.Combine(uploadsFolder, uniqueName);
+            var filePath = Path.Combine(folderPath, uniqueName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await image.CopyToAsync(stream);
             }
 
-            var imageUrl = $"/uploads/{uniqueName}";
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            var imageUrl = $"{baseUrl}/uploads/products/{uniqueName}";
             return Ok(new { imageUrl });
         }
+
 
     }
 }
