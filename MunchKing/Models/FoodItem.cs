@@ -10,5 +10,7 @@
         public bool IsAvailable { get; set; } = true;
         public int CategoryId { get; set; }
         public Category Category { get; set; } = default!;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     }
 }
