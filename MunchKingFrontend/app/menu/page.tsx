@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { apiGet } from "@/utils/api"; 
+import { apiGet } from "@/utils/api";
+import { useCart } from "../context/CartContext";
 
 type Category = { id: number; name: string };
 type FoodItem = {
@@ -18,6 +19,9 @@ export default function MenuPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [foodItems, setFoodItems] = useState<FoodItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [success, setSuccess] = useState("");
+
+  const { addToCart } = useCart();
 
   useEffect(() => {
     apiGet<Category[]>("/api/categories").then(setCategories);
@@ -31,6 +35,13 @@ export default function MenuPage() {
   return (
     <div className="min-h-screen pt-24 px-6 md:px-16 bg-gray-100">
       <h1 className="text-4xl font-bold text-center text-yellow-500 mb-6">Our Menu</h1>
+
+      {success && (
+        <div className="mb-6 text-center bg-green-100 text-green-800 px-4 py-2 rounded font-semibold shadow">
+          {success}
+        </div>
+      )}
+
       <div className="flex justify-center flex-wrap gap-4 mb-10">
         <button
           onClick={() => setSelectedCategory(null)}
@@ -79,7 +90,20 @@ export default function MenuPage() {
               <p className="text-gray-600 mt-1">{item.description}</p>
               <div className="mt-4 flex justify-between items-center">
                 <span className="font-bold text-lg">${item.price.toFixed(2)}</span>
-                <button className="bg-yellow-400 text-black px-4 py-2 rounded-full hover:bg-yellow-500 text-sm font-semibold">
+                <button
+                  onClick={() => {
+                    addToCart({
+                      foodItemId: item.id,
+                      name: item.name,
+                      price: item.price,
+                      imageUrl: item.imageUrl,
+                      quantity: 1,
+                    });
+                    setSuccess(`${item.name} added to cart!`);
+                    setTimeout(() => setSuccess(""), 3000);
+                  }}
+                  className="bg-yellow-400 text-black px-4 py-2 rounded-full hover:bg-yellow-500 text-sm font-semibold"
+                >
                   Add to Cart
                 </button>
               </div>
