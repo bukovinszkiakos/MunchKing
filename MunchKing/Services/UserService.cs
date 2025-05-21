@@ -18,25 +18,32 @@ namespace MunchKing.Services
         public async Task<List<UserDto>> GetAllUsersAsync()
         {
             var users = _userManager.Users.ToList();
-
             var result = new List<UserDto>();
 
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
 
-                result.Add(new UserDto
+                if (roles.Contains("User"))
                 {
-                    Id = user.Id,
-                    Username = user.UserName ?? "",
-                    Email = user.Email ?? "",
-                    Roles = roles.ToList(),
-                    CreatedAt = user.LockoutEnd?.DateTime ?? DateTime.UtcNow 
-                });
+                    result.Add(new UserDto
+                    {
+                        Id = user.Id,
+                        Username = user.UserName ?? "",
+                        FullName = user.FullName ?? "Unknown",
+                        Email = user.Email ?? "",
+                        Roles = roles.ToList(),
+
+                        CreatedAt = user.CreatedAt == default ? DateTime.UtcNow : user.CreatedAt
+                    });
+                }
             }
 
             return result;
         }
+
+
+
 
         public async Task UpdateProfileAsync(string userId, UpdateProfileRequest request, IWebHostEnvironment env)
         {
