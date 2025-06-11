@@ -26,17 +26,42 @@ Built with a modern **Next.js frontend** and a robust **ASP.NET Core Web API** b
 
 ---
 
-## 🎮 Live Demo (GIFs)
+## 🖼️ Live Demo (Screenshots)
 
-> Below are short previews showing core MunchKing features.
+> Below are screenshots showcasing **some** of the core pages and features of the MunchKing platform.  
+> These images highlight selected parts of the app and do not represent the full feature set.
 
-### 🛒 A user browses the menu, adds food items to cart, and checks out.
+### 🏠 Home Page
 
-<img src="https://github.com/user-attachments/assets/your-image-id" width="100%" />
+<img src="https://github.com/user-attachments/assets/b98c2feb-4b17-436a-bf58-cee7254c6f3a" width="75%" />
 
-### 🧑‍🍳 Admins manage products and view incoming orders in real-time.
+### ℹ️ About Page
 
-<img src="https://github.com/user-attachments/assets/your-image-id" width="100%" />
+<img src="https://github.com/user-attachments/assets/9dcd36e0-185b-4389-b209-f8fa23de0942" width="75%" />
+
+### 📬 Contact Page
+
+<img src="https://github.com/user-attachments/assets/aeacaaa1-d468-4a18-979d-47210b0ec7df" width="75%" />
+
+### 🛒 Cart Page
+
+<img src="https://github.com/user-attachments/assets/7e84d29b-671e-435c-84c4-b216d1609348" width="75%" />
+
+### 💳 Credit Card Payment
+
+<img src="https://github.com/user-attachments/assets/5cdecb62-c6bc-4558-bf13-115e52a02af8" width="75%" />
+
+### 🍔 Menu Page (User View)
+
+<img src="https://github.com/user-attachments/assets/8b8f8211-bab4-40f0-a7a7-1a19eae9af5a" width="75%" />
+
+### 🧑‍🍳 Admin Dashboard Overview
+
+<img src="https://github.com/user-attachments/assets/49957b60-6628-4f22-8134-9f097d846909" width="75%" />
+
+### 🗂️ Manage Categories (Admin Panel)
+
+<img src="https://github.com/user-attachments/assets/1a26cae7-4595-429c-8fa5-1cf948d41f39" width="75%" />
 
 ---
 
@@ -174,6 +199,7 @@ Covers:
 
 * [ ] Email confirmations
 * [ ] Graphs and analytics for admins
+* [ ] Invoice generation for completed orders
 
 ---
 
