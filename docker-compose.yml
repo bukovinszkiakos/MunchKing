@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: munchking-db
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "yourStrong(!)Password"
+      ACCEPT_EULA: "Y"
+    networks:
+      - munchking-net
+
+  backend:
+    build:
+      context: ./MunchKing  
+    container_name: munchking-backend
+    ports:
+      - "5136:5136"
+    environment:
+      ASPNETCORE_URLS: http://+:5136
+      ASPNETCORE_ENVIRONMENT: Development
+      PUBLIC_HOST: host.docker.internal:5136  
+      ConnectionStrings__DefaultConnection: "Server=munchking-db;Database=MunchKingDb;User Id=sa;Password=yourStrong(!)Password;Encrypt=False;TrustServerCertificate=True;"
+    depends_on:
+      - db
+    networks:
+      - munchking-net
+
+  frontend:
+    build:
+      context: ./MunchKingFrontend
+    container_name: munchking-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://host.docker.internal:5136 
+    depends_on:
+      - backend
+    networks:
+      - munchking-net
+
+networks:
+  munchking-net:

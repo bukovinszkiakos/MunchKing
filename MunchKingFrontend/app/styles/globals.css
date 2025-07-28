@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+
+  
+.input-field {
+  @apply px-4 py-2 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-400;
+}
+
+.file-input {
+  @apply border border-gray-300 rounded-lg p-2 bg-white;
+}
+
+
