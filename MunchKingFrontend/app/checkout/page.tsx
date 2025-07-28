@@ -22,7 +22,8 @@ export default function CheckoutPage() {
   const validateCard = () => {
     if (cardOwner.length < 2) return "Card owner name too short.";
     if (!/^\d{16}$/.test(cardNumber)) return "Card number must be 16 digits.";
-    if (!/^\d{2}$/.test(expMonth) || +expMonth > 12 || +expMonth < 1) return "Invalid month.";
+    if (!/^\d{2}$/.test(expMonth) || +expMonth > 12 || +expMonth < 1)
+      return "Invalid month.";
     if (!/^\d{4}$/.test(expYear)) return "Invalid year.";
     if (!/^\d{3}$/.test(cvv)) return "Invalid CVV.";
     return "";
@@ -38,7 +39,7 @@ export default function CheckoutPage() {
     }
 
     try {
-      const response = await apiPost("/api/orders/checkout", {
+      await apiPost("/api/orders/checkout", {
         paymentMode,
         items: items.map((item) => ({
           foodItemId: item.foodItemId,
@@ -49,14 +50,14 @@ export default function CheckoutPage() {
       setSuccess("Order placed successfully!");
       clearCart();
       setTimeout(() => router.push("/profile"), 1500);
-    } catch (err: any) {
+    } catch (err) {
       setError("Failed to place order. Please try again.");
     }
   };
 
   return (
     <div className="min-h-screen pt-28 px-4 flex justify-center bg-gray-100">
-      <div className="bg-white rounded-xl p-10 shadow-xl max-w-xl w-full">
+      <div className="bg-white rounded-xl p-10 shadow-xl max-w-xl w-full max-h-[550px]">
         <h1 className="text-2xl font-bold text-center text-yellow-500 mb-6">
           Order Payment
         </h1>
@@ -139,7 +140,9 @@ export default function CheckoutPage() {
         </div>
 
         {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
-        {success && <div className="text-green-600 text-sm mb-2">{success}</div>}
+        {success && (
+          <div className="text-green-600 text-sm mb-2">{success}</div>
+        )}
 
         <button
           className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded"
