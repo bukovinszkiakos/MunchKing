@@ -64,21 +64,18 @@ namespace MunchKing.IntegrationTests.Controllers
             Console.WriteLine("REGISTER STATUS: " + registerResponse.StatusCode);
             Console.WriteLine("REGISTER BODY: " + responseBody);
 
-            Assert.That(registerResponse.IsSuccessStatusCode, Is.True, "Admin regisztráció sikertelen.");
-
-            Assert.That(registerResponse.IsSuccessStatusCode, Is.True, "Admin regisztráció sikertelen.");
+            Assert.That(registerResponse.IsSuccessStatusCode, Is.True, "Admin registration failed.");
 
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var user = await userManager.FindByEmailAsync("admin@example.com");
-            Assert.That(user, Is.Not.Null, "A felhasználó nem található regisztráció után.");
+            Assert.That(user, Is.Not.Null, "User not found after registration.");
 
             await userManager.AddToRoleAsync(user, "Admin");
 
             var login = new AuthRequest("admin@example.com", "Admin123!");
             var loginResult = await _client.PostAsJsonAsync("/Auth/Login", login);
-            Assert.That(loginResult.IsSuccessStatusCode); 
+            Assert.That(loginResult.IsSuccessStatusCode);
         }
-
 
         [TearDown]
         public void TearDown()
@@ -96,14 +93,14 @@ namespace MunchKing.IntegrationTests.Controllers
             imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
 
             var content = new MultipartFormDataContent
-    {
-        { new StringContent("Test Item"), "name" },
-        { new StringContent("Tasty"), "description" },
-        { new StringContent("9,99"), "price" },
-        { new StringContent("1"), "categoryId" },
-        { new StringContent("true"), "isAvailable" },
-        { imageContent, "image", "test.jpg" }
-    };
+            {
+                { new StringContent("Test Item"), "name" },
+                { new StringContent("Tasty"), "description" },
+                { new StringContent("9,99"), "price" },
+                { new StringContent("1"), "categoryId" },
+                { new StringContent("true"), "isAvailable" },
+                { imageContent, "image", "test.jpg" }
+            };
 
             var response = await _client.PostAsync("/api/fooditems", content);
             var body = await response.Content.ReadAsStringAsync();
@@ -117,21 +114,18 @@ namespace MunchKing.IntegrationTests.Controllers
             Assert.That(created!.Name, Is.EqualTo("Test Item"));
         }
 
-
-
-
         [Test]
         public async Task Update_Should_Change_Item()
         {
             var createContent = new MultipartFormDataContent
-    {
-        { new StringContent("Original"), "name" },
-        { new StringContent("Desc"), "description" },
-        { new StringContent("5,0"), "price" },
-        { new StringContent("1"), "categoryId" },
-        { new StringContent("true"), "isAvailable" },
-        { new StreamContent(new MemoryStream(new byte[1])), "image", "original.jpg" }
-    };
+            {
+                { new StringContent("Original"), "name" },
+                { new StringContent("Desc"), "description" },
+                { new StringContent("5,0"), "price" },
+                { new StringContent("1"), "categoryId" },
+                { new StringContent("true"), "isAvailable" },
+                { new StreamContent(new MemoryStream(new byte[1])), "image", "original.jpg" }
+            };
 
             var create = await _client.PostAsync("/api/fooditems", createContent);
             Assert.That(create.StatusCode, Is.EqualTo(HttpStatusCode.Created));
@@ -158,20 +152,18 @@ namespace MunchKing.IntegrationTests.Controllers
             Assert.That(get!.IsAvailable, Is.False);
         }
 
-
-
         [Test]
         public async Task Delete_Should_Remove_Item()
         {
             var content = new MultipartFormDataContent
-        {
-            { new StringContent("To Delete"), "name" },
-            { new StringContent("Desc"), "description" },
-            { new StringContent("3,0"), "price" },
-            { new StringContent("1"), "categoryId" },
-            { new StringContent("true"), "isAvailable" },
-            { new StreamContent(new MemoryStream(new byte[1])), "image", "delete.jpg" }
-        };
+            {
+                { new StringContent("To Delete"), "name" },
+                { new StringContent("Desc"), "description" },
+                { new StringContent("3,0"), "price" },
+                { new StringContent("1"), "categoryId" },
+                { new StringContent("true"), "isAvailable" },
+                { new StreamContent(new MemoryStream(new byte[1])), "image", "delete.jpg" }
+            };
 
             var create = await _client.PostAsync("/api/fooditems", content);
             Assert.That(create.StatusCode, Is.EqualTo(HttpStatusCode.Created));
@@ -185,7 +177,5 @@ namespace MunchKing.IntegrationTests.Controllers
             var get = await _client.GetAsync($"/api/fooditems/{created.Id}");
             Assert.That(get.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
-
-
     }
 }
