@@ -43,7 +43,7 @@ export default function AdminDashboardPage() {
     if (user && !user.isAdmin) {
       router.replace("/");
     }
-  }, [user]);
+  }, [user, router]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -74,13 +74,13 @@ export default function AdminDashboardPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="flex justify-between items-start mb-4 relative">
-        <h1 className="text-3xl font-bold text-yellow-600 flex items-center gap-2 mt-2">
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 relative">
+        <h1 className="text-2xl sm:text-3xl font-bold text-yellow-600 flex items-center gap-2">
           📊 Admin Dashboard
         </h1>
 
-        <div className="relative mt-1" ref={dropdownRef}>
+        <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setShowDropdown((prev) => !prev)}
             className="flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold shadow"
@@ -101,46 +101,45 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
         <DashboardCard
-          icon={<FaShoppingBasket className="text-blue-500 text-3xl" />}
+          icon={<FaShoppingBasket className="text-blue-500 text-2xl sm:text-3xl" />}
           title="Categories"
-          value={data?.totalCategories ?? 0} 
+          value={data?.totalCategories ?? 0}
           href="/admin/categories"
         />
-
         <DashboardCard
-          icon={<FaHamburger className="text-red-400 text-3xl" />}
+          icon={<FaHamburger className="text-red-400 text-2xl sm:text-3xl" />}
           title="Products"
           value={data?.totalFoodItems ?? 0}
           href="/admin/products"
         />
         <DashboardCard
-          icon={<FaClipboardList className="text-green-600 text-3xl" />}
+          icon={<FaClipboardList className="text-green-600 text-2xl sm:text-3xl" />}
           title="Total Orders"
           value={data?.totalOrders ?? 0}
           href="/admin/orders"
         />
         <DashboardCard
-          icon={<FaCheck className="text-yellow-500 text-3xl" />}
-          title="Delivered Items"
+          icon={<FaCheck className="text-yellow-500 text-2xl sm:text-3xl" />}
+          title="Delivered"
           value={data?.ordersPerStatus?.Completed ?? 0}
           href="/admin/delivered"
         />
         <DashboardCard
-          icon={<FaClock className="text-orange-400 text-3xl" />}
-          title="Pending Items"
+          icon={<FaClock className="text-orange-400 text-2xl sm:text-3xl" />}
+          title="Pending"
           value={data?.ordersPerStatus?.Pending ?? 0}
           href="/admin/pending"
         />
         <DashboardCard
-          icon={<FaUsers className="text-indigo-500 text-3xl" />}
+          icon={<FaUsers className="text-indigo-500 text-2xl sm:text-3xl" />}
           title="Users"
           value={data?.totalUsers ?? 0}
           href="/admin/users"
         />
         <DashboardCard
-          icon={<FaMoneyBill className="text-green-500 text-3xl" />}
+          icon={<FaMoneyBill className="text-green-500 text-2xl sm:text-3xl" />}
           title="Sold Amount"
           value={new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -149,7 +148,7 @@ export default function AdminDashboardPage() {
           href="/admin/sold"
         />
         <DashboardCard
-          icon={<FaComments className="text-yellow-500 text-3xl" />}
+          icon={<FaComments className="text-yellow-500 text-2xl sm:text-3xl" />}
           title="Feedbacks"
           value={data?.totalFeedbacks ?? 0}
           href="/admin/contact"
@@ -171,16 +170,13 @@ function DashboardCard({
   href: string;
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-md p-5 flex flex-col justify-between hover:shadow-lg transition">
-      <div className="flex items-center gap-4 mb-4">
+    <div className="bg-white rounded-xl shadow-md p-4 flex flex-col justify-between hover:shadow-lg transition text-sm sm:text-base">
+      <div className="flex items-center gap-3 mb-3">
         {icon}
-        <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
+        <h3 className="font-semibold text-gray-700">{title}</h3>
       </div>
-      <div className="text-3xl font-bold text-gray-900 mb-4">{value}</div>
-      <Link
-        href={href}
-        className="text-sm text-blue-600 hover:underline mt-auto"
-      >
+      <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">{value}</div>
+      <Link href={href} className="text-blue-600 hover:underline mt-auto text-sm">
         View Details →
       </Link>
     </div>
