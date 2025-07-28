@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5136";
+const BASE_URL = "";
 
 interface ApiError {
   status: number;
@@ -31,9 +31,21 @@ async function apiFetch<T>(endpoint: string, method = "GET", data?: any): Promis
 
     let message = "Unknown error";
     try {
-      const errorData = await response.text();
-      message = errorData || response.statusText;
-    } catch {}
+      const contentType = response.headers.get("content-type") || "";
+
+      if (contentType.includes("application/json")) {
+        const errorData = await response.json();
+        if (errorData && typeof errorData === "object" && errorData.message) {
+          message = errorData.message;
+        } else {
+          message = JSON.stringify(errorData);
+        }
+      } else {
+        message = await response.text();
+      }
+    } catch {
+      message = response.statusText;
+    }
 
     throw {
       status: response.status,
@@ -43,8 +55,22 @@ async function apiFetch<T>(endpoint: string, method = "GET", data?: any): Promis
 
   if (response.status === 204) return null as T;
 
-  return response.json();
+  const contentType = response.headers.get("content-type") || "";
+  const contentLength = response.headers.get("content-length");
+
+  if (contentType.includes("application/json")) {
+    try {
+      return await response.json();
+    } catch {
+      return null as T;
+    }
+  }
+
+  if (contentLength === "0") return null as T;
+
+  return null as T;
 }
+
 
 export const apiGet = <T>(endpoint: string) => apiFetch<T>(endpoint, "GET");
 export const apiPost = <T>(endpoint: string, data: any) => apiFetch<T>(endpoint, "POST", data);
