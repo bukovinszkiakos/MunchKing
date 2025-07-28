@@ -19,6 +19,7 @@ export default function RegisterPage() {
   });
 
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,6 +35,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccessMessage("");
 
     const formData = new FormData();
     formData.append("FullName", form.fullName);
@@ -55,23 +57,55 @@ export default function RegisterPage() {
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(text || "Registration failed");
+
+        let parsedMessage = "Registration failed";
+        try {
+          const json = JSON.parse(text);
+          if (typeof json === "object" && json !== null) {
+            parsedMessage = Object.values(json).flat().join(" ");
+          }
+        } catch {
+          parsedMessage = text || "Registration failed";
+        }
+
+        throw new Error(parsedMessage);
       }
 
-      router.push("/auth/login");
-    } catch (err: any) {
-      setError(err.message || "Something went wrong.");
+      setSuccessMessage("🎉 Registration successful! Redirecting to login...");
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 3500);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong.");
+      }
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
       <div className="bg-white shadow-lg rounded-lg p-10 w-full max-w-4xl">
-        <h2 className="text-3xl font-bold text-center text-yellow-500 mb-8">User Registration</h2>
+        <h2 className="text-3xl font-bold text-center text-yellow-500 mb-8">
+          User Registration
+        </h2>
 
-        {error && <p className="text-red-500 text-center text-sm mb-4">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-center text-sm mb-4 whitespace-pre-line">
+            {error}
+          </p>
+        )}
+        {successMessage && (
+          <p className="text-green-600 text-center text-sm mb-4">
+            {successMessage}
+          </p>
+        )}
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
           <input
             type="text"
             name="fullName"
