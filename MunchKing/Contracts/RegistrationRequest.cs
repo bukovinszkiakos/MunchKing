@@ -2,15 +2,29 @@
 
 namespace MunchKing.Contracts
 {
-    public record RegistrationRequest(
-     [Required] string Email,
-     [Required] string Username,
-     [Required] string Password,
-     [Required] string FullName,
-     [Required] string Address,
-     [Required] string PostalCode,
-     [Required] string MobileNumber,
-     IFormFile? ProfileImage 
- );
+    public class RegistrationRequest
+    {
+        [Required]
+        public string Email { get; set; } = null!;
 
+        [Required]
+        public string Username { get; set; } = null!;
+
+        [Required]
+        public string Password { get; set; } = null!;
+
+        [Required]
+        public string FullName { get; set; } = null!;
+
+        [Required]
+        public string Address { get; set; } = null!;
+
+        [Required]
+        public string PostalCode { get; set; } = null!;
+
+        [Required]
+        public string MobileNumber { get; set; } = null!;
+
+        public IFormFile? ProfileImage { get; set; }
+    }
 }
