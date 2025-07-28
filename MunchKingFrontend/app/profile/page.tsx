@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useAuth } from "../context/AuthContext";
 import { apiGet, apiPost } from "@/utils/api";
 import PurchaseHistory from "../components/PurchaseHistory/PurchaseHistoryTab";
@@ -23,6 +22,19 @@ export default function ProfilePage() {
   const [image, setImage] = useState<File | null>(null);
   const [refreshToken, setRefreshToken] = useState<number>(Date.now());
   const [activeTab, setActiveTab] = useState<"info" | "history">("info");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const { user, loading } = useAuth();
+
+if (loading) return <p className="mt-32 text-center">Loading...</p>;
+if (!user) {
+  if (typeof window !== "undefined") {
+    window.location.href = "/auth/login";
+  }
+  return null;
+}
+
 
   useEffect(() => {
     async function loadProfile() {
@@ -37,27 +49,38 @@ export default function ProfilePage() {
     setProfile((prev) => prev && { ...prev, [name]: value });
   };
 
-  const handleSave = async () => {
-    if (!profile) return;
+ const handleSave = async () => {
+  if (!profile) return;
 
-    const formData = new FormData();
-    formData.append("fullName", profile.fullName);
-    formData.append("username", profile.username);
-    formData.append("email", profile.email);
-    formData.append("mobileNumber", profile.mobileNumber);
-    formData.append("address", profile.address);
-    formData.append("postalCode", profile.postalCode);
-    if (image) formData.append("profileImage", image);
+  const formData = new FormData();
+  formData.append("fullName", profile.fullName);
+  formData.append("username", profile.username);
+  formData.append("email", profile.email);
+  formData.append("mobileNumber", profile.mobileNumber);
+  formData.append("address", profile.address);
+  formData.append("postalCode", profile.postalCode);
+  if (image) formData.append("profileImage", image);
 
-    try {
-      await apiPost("/api/profile/update", formData);
-      await fetchUser();
-      setEditing(false);
-      setRefreshToken(Date.now());
-    } catch (err) {
-      console.error("Failed to update profile", err);
-    }
-  };
+  try {
+    setError(null);
+    setSuccess(null);
+
+    await apiPost("/api/profile/update", formData);
+    await fetchUser();
+    setEditing(false);
+    setRefreshToken(Date.now());
+    setSuccess("✅ Profile updated successfully!");
+
+    setTimeout(() => setSuccess(null), 3000);
+  } catch (err: any) {
+    const message = err?.message || "An unexpected error occurred.";
+    setError(message);
+    setTimeout(() => setError(null), 3000);
+  }
+};
+
+
+
 
   if (!profile) return <p className="mt-32 text-center">Loading...</p>;
 
@@ -114,6 +137,17 @@ export default function ProfilePage() {
             <p className="text-gray-600">@{profile.username}</p>
             <p className="text-gray-500">{profile.email}</p>
           </div>
+
+          {error && (
+            <div className="text-red-600 font-semibold mb-4 text-center mt-6">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="text-green-600 font-semibold mb-4 text-center mt-6">
+              {success}
+            </div>
+          )}
 
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input label="Full Name" name="fullName" value={profile.fullName} onChange={handleChange} disabled={!editing} />
