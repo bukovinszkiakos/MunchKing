@@ -40,7 +40,7 @@ namespace MunchKing.Context
 
             builder.Entity<Order>()
                 .Property(o => o.Status)
-                .HasConversion<string>(); 
+                .HasConversion<string>();
 
             builder.Entity<FoodItem>()
                 .Property(f => f.Price)
@@ -51,13 +51,16 @@ namespace MunchKing.Context
                 .HasPrecision(18, 2);
 
             builder.Entity<Order>()
-               .HasOne(o => o.User)
-               .WithMany()
-               .HasForeignKey(o => o.UserId)
-               .OnDelete(DeleteBehavior.Restrict);
+                .Property(o => o.TotalAmount)
+                .HasPrecision(18, 2); 
 
-
+            builder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
+
 
 
     }
