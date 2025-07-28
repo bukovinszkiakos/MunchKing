@@ -41,8 +41,8 @@ export default function AboutPage() {
               time.
             </p>
             <p className="text-gray-400 text-base">
-              Whether you're grabbing a quick lunch, feeding the family, or
-              enjoying a midnight snack — MunchKing is here to serve. Our chefs
+              Whether you&apos;re grabbing a quick lunch, feeding the family, or
+              enjoying a midnight snack &mdash; MunchKing is here to serve. Our chefs
               craft every burger, fry, and bite with passion and precision. Join
               thousands who trust MunchKing to satisfy their cravings.
             </p>
@@ -61,14 +61,14 @@ export default function AboutPage() {
           <div className="text-left">
             <h4 className="text-lg font-bold text-white mb-3">Contact Us</h4>
             <p className="mb-1">📍 Budapest, Hungary</p>
-            <p className="mb-1">☎ +36 70 123 4567</p>
-            <p>✉ support@munchking.com</p>
+            <p className="mb-1">☎ +36 70 111 111</p>
+            <p>✉ munchking@munchking.com</p>
           </div>
 
           <div className="text-center">
             <h4 className="text-lg font-bold text-white mb-3">MunchKing</h4>
             <p className="mb-3">
-              We're passionate about crafting tasty fast food experiences using
+              We&apos;re passionate about crafting tasty fast food experiences using
               fresh ingredients and lightning-fast service.
             </p>
             <div className="flex justify-center gap-5 text-yellow-400 text-xl">
