@@ -32,7 +32,7 @@ export function middleware(request: NextRequest) {
       ? roles.includes("Admin") || roles.includes("SuperAdmin")
       : roles === "Admin" || roles === "SuperAdmin";
 
-    if (isAdmin && pathname === "/profile") {
+    if (isAdmin && (pathname === "/" || pathname === "/menu" || pathname === "/profile")) {
       const adminUrl = request.nextUrl.clone();
       adminUrl.pathname = "/admin";
       return NextResponse.redirect(adminUrl);
