@@ -23,7 +23,6 @@ AddServices();
 ConfigureSwagger();
 
 builder.Services.AddHttpContextAccessor();
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -38,27 +37,26 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("AllowFrontend"); 
-
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.WebRootPath, "uploads")),
     RequestPath = "/uploads"
 });
-
 app.UseStaticFiles();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
-
-
-
 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
+    var providerName = dbContext.Database.ProviderName;
+
+    if (!string.IsNullOrEmpty(providerName) &&
+        providerName.Equals("Microsoft.EntityFrameworkCore.SqlServer", StringComparison.OrdinalIgnoreCase))
+    {
+        dbContext.Database.Migrate();
+    }
     var seeder = services.GetRequiredService<RoleSeeder>();
     await seeder.SeedRolesAndAdminAsync();
 }
@@ -78,7 +76,6 @@ void AddDbContexts()
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 }
-
 void AddIdentity()
 {
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -103,7 +100,6 @@ void AddIdentity()
         };
     });
 }
-
 void AddAuthentication()
 {
     var jwtSection = builder.Configuration.GetSection("Jwt");
@@ -139,7 +135,6 @@ void AddAuthentication()
  });
 
 }
-
 void AddServices()
 {
     builder.Services.AddScoped<IFoodItemRepository, FoodItemRepository>();
@@ -153,12 +148,12 @@ void AddServices()
     builder.Services.AddScoped<IAdminService, AdminService>();
     builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
     builder.Services.AddScoped<IContactMessageService, ContactMessageService>();
+    builder.Services.AddScoped<IAdminStatsService, AdminStatsService>();
     builder.Services.AddScoped<InvoiceService>();
     builder.Services.AddScoped<RoleSeeder>();
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
 }
-
 void ConfigureSwagger()
 {
     builder.Services.AddSwaggerGen(option =>
@@ -188,6 +183,4 @@ void ConfigureSwagger()
         });
     });
 }
-
-
 public partial class Program { }

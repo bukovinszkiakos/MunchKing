@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.15" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.15">
       <PrivateAssets>all</PrivateAssets>
@@ -16,10 +18,6 @@
     </PackageReference>
     <PackageReference Include="QuestPDF" Version="2025.4.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Integration\" />
   </ItemGroup>
 
 </Project>
