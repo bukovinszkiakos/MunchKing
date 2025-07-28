@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
 
 export default function LoginPage() {
-  const router = useRouter();
   const { login } = useAuth();
 
   const [usernameOrEmail, setUsernameOrEmail] = useState<string>("");
@@ -19,8 +17,12 @@ export default function LoginPage() {
 
     try {
       await login(usernameOrEmail, password);
-    } catch (err: any) {
-      setError(err?.message || "Login failed");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Login failed");
+      }
     }
   };
 
@@ -60,7 +62,7 @@ export default function LoginPage() {
         </form>
 
         <div className="text-center mt-4 text-sm">
-          New user?{' '}
+          New user?{" "}
           <Link href="/auth/register" className="text-yellow-500 hover:underline">
             Register here
           </Link>
