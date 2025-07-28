@@ -19,12 +19,14 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   fetchUser: () => Promise<User | null>;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
   const fetchUser = async (): Promise<User | null> => {
@@ -48,18 +50,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch {
       setUser(null);
       return null;
+    } finally {
+      setLoading(false);
     }
   };
 
   const login = async (email: string, password: string) => {
     await apiPost("/Auth/Login", { email, password });
+
     const userData = await fetchUser();
     if (!userData) return;
 
     router.refresh();
 
-    if (userData.isAdmin) router.replace("/admin");
-    else router.replace("/");
+    setTimeout(() => {
+      if (userData.isAdmin) {
+        router.replace("/admin");
+      } else {
+        router.replace("/menu");
+      }
+    }, 50);
   };
 
   const logout = async () => {
@@ -74,7 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, fetchUser }}>
+    <AuthContext.Provider value={{ user, login, logout, fetchUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
