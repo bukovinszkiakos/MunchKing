@@ -11,6 +11,8 @@
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
 
+
+        public bool CategoryIsActive { get; set; }
         public DateTime CreatedAt { get; set; }
 
     }

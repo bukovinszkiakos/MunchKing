@@ -9,7 +9,9 @@
             public string Email { get; set; }
             public List<string> Roles { get; set; }
             public DateTime CreatedAt { get; set; }
-        
+
+            public bool IsAdmin { get; set; } 
+
 
     }
 }
