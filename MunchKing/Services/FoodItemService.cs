@@ -15,7 +15,7 @@ namespace MunchKing.Services
 
         public async Task<IEnumerable<FoodItemDto>> GetAllAsync()
         {
-            var items = await _foodRepo.GetAllAsync();
+            var items = await _foodRepo.GetAllAsync(); 
             return items.Select(f => new FoodItemDto
             {
                 Id = f.Id,
@@ -25,9 +25,12 @@ namespace MunchKing.Services
                 ImageUrl = f.ImageUrl,
                 IsAvailable = f.IsAvailable,
                 CategoryId = f.CategoryId,
-                CategoryName = f.Category?.Name ?? ""
+                CategoryName = f.Category?.Name ?? "",
+                CategoryIsActive = f.Category?.IsActive ?? false, 
+                CreatedAt = f.CreatedAt
             });
         }
+
 
         public async Task<FoodItemDto?> GetByIdAsync(int id)
         {
@@ -43,9 +46,12 @@ namespace MunchKing.Services
                 ImageUrl = f.ImageUrl,
                 IsAvailable = f.IsAvailable,
                 CategoryId = f.CategoryId,
-                CategoryName = f.Category?.Name ?? ""
+                CategoryName = f.Category?.Name ?? "",
+                CategoryIsActive = f.Category?.IsActive ?? false, 
+                CreatedAt = f.CreatedAt
             };
         }
+
 
         public async Task<FoodItemDto> CreateAsync(FoodItemDto dto)
         {
@@ -54,7 +60,7 @@ namespace MunchKing.Services
                 Name = dto.Name,
                 Description = dto.Description,
                 Price = dto.Price,
-                ImageUrl = dto.ImageUrl,
+                ImageUrl = dto.ImageUrl?.Trim(), 
                 IsAvailable = dto.IsAvailable,
                 CategoryId = dto.CategoryId
             };
@@ -65,6 +71,8 @@ namespace MunchKing.Services
             return await GetByIdAsync(food.Id) ?? throw new Exception("Creation failed");
         }
 
+
+
         public async Task UpdateAsync(int id, FoodItemDto dto)
         {
             var food = await _foodRepo.GetByIdAsync(id) ?? throw new KeyNotFoundException("Item not found");
@@ -72,13 +80,15 @@ namespace MunchKing.Services
             food.Name = dto.Name;
             food.Description = dto.Description;
             food.Price = dto.Price;
-            food.ImageUrl = dto.ImageUrl;
+            food.ImageUrl = dto.ImageUrl?.Trim(); 
             food.IsAvailable = dto.IsAvailable;
             food.CategoryId = dto.CategoryId;
 
             _foodRepo.Update(food);
             await _foodRepo.SaveChangesAsync();
         }
+
+
 
         public async Task DeleteAsync(int id)
         {

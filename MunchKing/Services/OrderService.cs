@@ -18,12 +18,17 @@ namespace MunchKing.Services
 
         public async Task<int> PlaceOrderAsync(string userId, CheckoutRequest request)
         {
+            var existingOrderCount = await _context.Orders
+                .Where(o => o.UserId == userId)
+                .CountAsync();
+
             var order = new Order
             {
                 UserId = userId,
                 PaymentMode = request.PaymentMode,
                 Status = OrderStatus.Pending,
                 CreatedAt = DateTime.UtcNow,
+                DisplayOrderNumber = existingOrderCount + 1, 
                 OrderItems = new List<OrderItem>()
             };
 
@@ -42,13 +47,16 @@ namespace MunchKing.Services
                 order.OrderItems.Add(orderItem);
             }
 
+            order.TotalAmount = order.OrderItems.Sum(oi => oi.Quantity * oi.UnitPrice);
+
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
             return order.Id;
         }
 
-        public async Task<List<OrderDto>> GetUserOrdersAsync(string userId)
+
+        public async Task<List<OrderDto>> GetUserOrdersAsync(string userId) 
         {
             var orders = await _context.Orders
                 .Include(o => o.OrderItems)
@@ -60,6 +68,7 @@ namespace MunchKing.Services
             return orders.Select(o => new OrderDto
             {
                 OrderId = o.Id,
+                DisplayOrderNumber = o.DisplayOrderNumber, 
                 CreatedAt = o.CreatedAt,
                 Status = o.Status.ToString(),
                 PaymentMode = o.PaymentMode,
@@ -72,6 +81,7 @@ namespace MunchKing.Services
                 }).ToList()
             }).ToList();
         }
+
 
         public async Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus)
         {

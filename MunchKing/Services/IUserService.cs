@@ -8,5 +8,8 @@ namespace MunchKing.Services
 
         Task UpdateProfileAsync(string userId, UpdateProfileRequest request, IWebHostEnvironment env);
 
+        Task<bool> ToggleAdminRoleAsync(string userId);
+
+
     }
 }

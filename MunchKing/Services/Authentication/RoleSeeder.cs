@@ -34,6 +34,8 @@ namespace MunchKing.Services.Authentication
                 {
                     UserName = "AdminUser",
                     Email = adminEmail,
+                    FullName = "Admin", 
+                    CreatedAt = DateTime.UtcNow,
                     EmailConfirmed = true
                 };
 
@@ -53,6 +55,8 @@ namespace MunchKing.Services.Authentication
                 {
                     UserName = "SuperAdmin",
                     Email = superAdminEmail,
+                    FullName = "Super Admin", 
+                    CreatedAt = DateTime.UtcNow,
                     EmailConfirmed = true
                 };
 

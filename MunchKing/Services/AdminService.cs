@@ -27,7 +27,7 @@ namespace MunchKing.Services.Admin
                     Id = user.Id,
                     Username = user.UserName ?? "",
                     Email = user.Email ?? "",
-                    CreatedAt = user.LockoutEnd?.UtcDateTime ?? DateTime.UtcNow, 
+                    CreatedAt = user.CreatedAt,
                     Roles = roles.ToList()
                 });
             }

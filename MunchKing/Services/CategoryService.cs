@@ -46,12 +46,14 @@ namespace MunchKing.Services
             var cat = new Category
             {
                 Name = dto.Name,
-                ImageUrl = dto.ImageUrl,
+                ImageUrl = dto.ImageUrl, 
                 IsActive = dto.IsActive,
                 CreatedAt = DateTime.UtcNow
             };
+
             await _repo.AddAsync(cat);
             await _repo.SaveChangesAsync();
+
             return new CategoryDto
             {
                 Id = cat.Id,
@@ -63,15 +65,24 @@ namespace MunchKing.Services
         }
 
 
+
+
+
         public async Task UpdateAsync(int id, CategoryDto dto)
         {
             var cat = await _repo.GetByIdAsync(id) ?? throw new KeyNotFoundException("Not found");
+
             cat.Name = dto.Name;
-            cat.ImageUrl = dto.ImageUrl;
+            cat.ImageUrl = dto.ImageUrl?.Trim(); 
             cat.IsActive = dto.IsActive;
+
             _repo.Update(cat);
             await _repo.SaveChangesAsync();
         }
+
+
+
+
 
 
 
