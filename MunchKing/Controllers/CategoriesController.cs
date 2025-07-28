@@ -32,7 +32,7 @@ namespace MunchKing.Controllers
 
         [Authorize(Roles = "Admin,SuperAdmin")]
         [HttpPost]
-        [RequestSizeLimit(5_000_000)] 
+        [RequestSizeLimit(5_000_000)]
         public async Task<IActionResult> Create([FromForm] IFormFile image, [FromForm] string name, [FromForm] bool isActive)
         {
             if (image == null || image.Length == 0)
@@ -40,7 +40,7 @@ namespace MunchKing.Controllers
 
             var fileName = $"{Guid.NewGuid()}_{image.FileName}";
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/categories");
-            Directory.CreateDirectory(folderPath); 
+            Directory.CreateDirectory(folderPath);
 
             var filePath = Path.Combine(folderPath, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
@@ -48,8 +48,8 @@ namespace MunchKing.Controllers
                 await image.CopyToAsync(stream);
             }
 
-            var host = Request.Scheme + "://" + Request.Host.Value;
-            var imageUrl = $"{host}/uploads/categories/{fileName}";
+            var publicHost = Environment.GetEnvironmentVariable("PUBLIC_HOST") ?? Request.Host.Value;
+            var imageUrl = $"http://{publicHost}/uploads/categories/{fileName}";
 
             var dto = new CategoryDto
             {
@@ -64,14 +64,14 @@ namespace MunchKing.Controllers
 
         [Authorize(Roles = "Admin,SuperAdmin")]
         [HttpPut("{id}")]
-        [RequestSizeLimit(5_000_000)] 
+        [RequestSizeLimit(5_000_000)]
         public async Task<IActionResult> Update(int id, [FromForm] IFormFile? image, [FromForm] string name, [FromForm] bool isActive)
         {
             var category = await _service.GetByIdAsync(id);
             if (category == null)
                 return NotFound();
 
-            string? imageUrl = category.ImageUrl;
+            string imageUrl = category.ImageUrl;
 
             if (image != null && image.Length > 0)
             {
@@ -85,15 +85,15 @@ namespace MunchKing.Controllers
                     await image.CopyToAsync(stream);
                 }
 
-                var host = Request.Scheme + "://" + Request.Host.Value;
-                imageUrl = $"{host}/uploads/categories/{fileName}";
+                var publicHost = Environment.GetEnvironmentVariable("PUBLIC_HOST") ?? Request.Host.Value;
+                imageUrl = $"http://{publicHost}/uploads/categories/{fileName}";
             }
 
             var dto = new CategoryDto
             {
                 Id = id,
                 Name = name,
-                ImageUrl = imageUrl!,
+                ImageUrl = imageUrl,
                 IsActive = isActive
             };
 

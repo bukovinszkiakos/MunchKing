@@ -57,10 +57,12 @@ namespace OnlineFoodOrdering.Controllers
             Response.Cookies.Append("token", result.Token, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false,
+                Secure = false, 
                 SameSite = SameSiteMode.Lax,
-                Expires = DateTime.UtcNow.AddMinutes(30)
+                Domain = "localhost",
+                Expires = DateTime.UtcNow.AddMinutes(30),
             });
+
 
 
             return Ok(new AuthResponse(result.Email, result.Username, result.Token));

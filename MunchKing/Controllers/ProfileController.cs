@@ -54,9 +54,24 @@ namespace MunchKing.Controllers
         public async Task<IActionResult> UpdateProfile([FromForm] UpdateProfileRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _userService.UpdateProfileAsync(userId, request, _env);
-            return Ok(new { message = "Profile updated" });
+            try
+            {
+                await _userService.UpdateProfileAsync(userId, request, _env);
+                return Ok(new { message = "Profile updated" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+
+            }
         }
+
+
 
     }
 }

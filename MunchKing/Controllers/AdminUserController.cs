@@ -22,5 +22,17 @@ namespace MunchKing.Controllers
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
+
+        [HttpPut("{userId}/toggle-admin")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> ToggleAdminRole(string userId)
+        {
+            var result = await _userService.ToggleAdminRoleAsync(userId);
+            return result ? Ok() : BadRequest("Could not update role");
+        }
+
     }
+
+
+
 }

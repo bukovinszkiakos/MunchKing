@@ -20,14 +20,6 @@ namespace MunchKing.Controllers
             _dashboardService = dashboardService;
         }
 
-        /*[HttpGet("users")]
-        public async Task<ActionResult<List<UserDto>>> GetAllUsers()
-        {
-            var users = await _adminService.GetAllUsersAsync();
-            return Ok(users);
-        }
-        */
-
         [HttpDelete("users/{userId}")]
         public async Task<IActionResult> DeleteUser(string userId)
         {
@@ -42,5 +34,13 @@ namespace MunchKing.Controllers
             return Ok(stats);
         }
 
+
+        /*[HttpGet("users")]
+      public async Task<ActionResult<List<UserDto>>> GetAllUsers()
+      {
+          var users = await _adminService.GetAllUsersAsync();
+          return Ok(users);
+      }
+      */
     }
 }
