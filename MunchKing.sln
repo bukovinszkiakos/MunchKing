@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MunchKing", "MunchKing\MunchKing.csproj", "{5D5555D9-D160-491A-A315-B22B239D06DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MunchKing", "MunchKing\MunchKing.csproj", "{5D5555D9-D160-491A-A315-B22B239D06DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{9DB44079-4101-4206-858B-298B78A9D3B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "Integrationtests\IntegrationTests.csproj", "{88FB86EB-B3C4-4D8F-A365-494853558720}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{5D5555D9-D160-491A-A315-B22B239D06DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D5555D9-D160-491A-A315-B22B239D06DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D5555D9-D160-491A-A315-B22B239D06DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DB44079-4101-4206-858B-298B78A9D3B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DB44079-4101-4206-858B-298B78A9D3B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DB44079-4101-4206-858B-298B78A9D3B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DB44079-4101-4206-858B-298B78A9D3B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88FB86EB-B3C4-4D8F-A365-494853558720}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88FB86EB-B3C4-4D8F-A365-494853558720}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88FB86EB-B3C4-4D8F-A365-494853558720}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88FB86EB-B3C4-4D8F-A365-494853558720}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
