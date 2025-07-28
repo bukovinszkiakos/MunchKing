@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiDelete, apiGet } from "@/utils/api";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaChevronUp, FaChevronDown } from "react-icons/fa";
 
 interface ContactMessage {
   id: number;
@@ -16,6 +16,8 @@ interface ContactMessage {
 export default function AdminFeedbackPage() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<keyof ContactMessage>("sentAt");
+  const [sortAsc, setSortAsc] = useState(true);
 
   useEffect(() => {
     fetchMessages();
@@ -36,13 +38,35 @@ export default function AdminFeedbackPage() {
     }
   };
 
-  const filtered = messages.filter(
-    (m) =>
-      m.name.toLowerCase().includes(search.toLowerCase()) ||
-      m.email.toLowerCase().includes(search.toLowerCase()) ||
-      m.subject.toLowerCase().includes(search.toLowerCase()) ||
-      m.message.toLowerCase().includes(search.toLowerCase())
+  const toggleSort = (key: keyof ContactMessage) => {
+    if (key === sortKey) setSortAsc(!sortAsc);
+    else {
+      setSortKey(key);
+      setSortAsc(true);
+    }
+  };
+
+  const renderArrow = (key: keyof ContactMessage) => (
+    <span className="inline-block w-4 ml-1">
+      {sortKey === key && (sortAsc ? <FaChevronUp /> : <FaChevronDown />)}
+    </span>
   );
+
+  const filtered = messages
+    .filter(
+      (m) =>
+        m.name.toLowerCase().includes(search.toLowerCase()) ||
+        m.email.toLowerCase().includes(search.toLowerCase()) ||
+        m.subject.toLowerCase().includes(search.toLowerCase()) ||
+        m.message.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => {
+      const valA = a[sortKey];
+      const valB = b[sortKey];
+      return sortAsc
+        ? `${valA}`.localeCompare(`${valB}`)
+        : `${valB}`.localeCompare(`${valA}`);
+    });
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -50,27 +74,47 @@ export default function AdminFeedbackPage() {
         📨 User Feedback
       </h1>
 
-      <div className="mb-4 flex justify-between items-center">
+      <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div className="text-lg font-semibold">CONTACT MESSAGES</div>
         <input
           type="text"
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border px-3 py-2 rounded shadow-sm"
+          className="border px-3 py-2 rounded shadow-sm w-full sm:w-auto"
         />
       </div>
 
-      <div className="overflow-x-auto bg-white shadow rounded-lg">
+      <div className="hidden sm:block overflow-x-auto bg-white shadow rounded-lg">
         <table className="w-full text-sm text-left">
           <thead className="bg-gray-200">
             <tr>
               <th className="p-3">#</th>
-              <th className="p-3">Name</th>
-              <th className="p-3">Email</th>
-              <th className="p-3">Subject</th>
-              <th className="p-3">Message</th>
-              <th className="p-3">Date</th>
+              <th className="p-3 cursor-pointer" onClick={() => toggleSort("name")}>
+                <span className="inline-flex items-center">
+                  Name {renderArrow("name")}
+                </span>
+              </th>
+              <th className="p-3 cursor-pointer" onClick={() => toggleSort("email")}>
+                <span className="inline-flex items-center">
+                  Email {renderArrow("email")}
+                </span>
+              </th>
+              <th className="p-3 cursor-pointer" onClick={() => toggleSort("subject")}>
+                <span className="inline-flex items-center">
+                  Subject {renderArrow("subject")}
+                </span>
+              </th>
+              <th className="p-3 cursor-pointer" onClick={() => toggleSort("message")}>
+                <span className="inline-flex items-center">
+                  Message {renderArrow("message")}
+                </span>
+              </th>
+              <th className="p-3 cursor-pointer" onClick={() => toggleSort("sentAt")}>
+                <span className="inline-flex items-center">
+                  Date {renderArrow("sentAt")}
+                </span>
+              </th>
               <th className="p-3">Delete</th>
             </tr>
           </thead>
@@ -93,13 +137,11 @@ export default function AdminFeedbackPage() {
                     {msg.subject}
                   </div>
                 </td>
-
                 <td className="p-3 max-w-xs h-24 overflow-hidden">
                   <div className="overflow-y-auto h-full whitespace-pre-wrap break-words pr-2">
                     {msg.message}
                   </div>
                 </td>
-
                 <td className="p-3">{new Date(msg.sentAt).toLocaleString()}</td>
                 <td className="p-3">
                   <button
@@ -120,6 +162,43 @@ export default function AdminFeedbackPage() {
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="sm:hidden space-y-4">
+        {filtered.length === 0 ? (
+          <div className="text-center text-gray-500">No messages found.</div>
+        ) : (
+          filtered.map((msg, i) => (
+            <div
+              key={msg.id}
+              className="border rounded-lg p-4 shadow bg-white space-y-2 text-sm"
+            >
+              <div>
+                <strong>#{i + 1}</strong> - {new Date(msg.sentAt).toLocaleString()}
+              </div>
+              <div><strong>Name:</strong> {msg.name}</div>
+              <div><strong>Email:</strong> {msg.email}</div>
+              <div>
+                <strong>Subject:</strong>
+                <div className="whitespace-pre-wrap max-h-24 overflow-y-auto pr-1">
+                  {msg.subject}
+                </div>
+              </div>
+              <div>
+                <strong>Message:</strong>
+                <div className="whitespace-pre-wrap max-h-24 overflow-y-auto pr-1">
+                  {msg.message}
+                </div>
+              </div>
+              <button
+                onClick={() => deleteMessage(msg.id)}
+                className="mt-2 text-red-600 hover:text-red-800 flex items-center gap-1"
+              >
+                <FaTrash /> Delete
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
