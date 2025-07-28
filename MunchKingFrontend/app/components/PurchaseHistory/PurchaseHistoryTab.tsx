@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { apiDelete, apiGet } from "@/utils/api";
-import { useAuth } from "../../context/AuthContext";
 
 interface OrderItem {
   productName: string;
@@ -13,6 +12,7 @@ interface OrderItem {
 
 interface Order {
   orderId: number;
+  displayOrderNumber: number; 
   createdAt: string;
   status: string;
   paymentMode: string;
@@ -27,7 +27,6 @@ const statusStyles: Record<string, string> = {
 };
 
 export default function PurchaseHistoryTab() {
-  const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +45,9 @@ export default function PurchaseHistoryTab() {
   }, []);
 
   const handleDelete = async (orderId: number) => {
-    const confirmed = window.confirm("Are you sure you want to delete this order?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this order?"
+    );
     if (!confirmed) return;
 
     try {
@@ -60,14 +61,21 @@ export default function PurchaseHistoryTab() {
   if (loading) return <p className="mt-10 text-center">Loading orders...</p>;
 
   if (orders.length === 0)
-    return <p className="mt-10 text-center">You have no purchase history yet.</p>;
+    return (
+      <p className="mt-10 text-center">You have no purchase history yet.</p>
+    );
 
   return (
     <div className="mt-8 max-h-[600px] overflow-y-auto pr-2">
       {orders.map((order) => (
-        <div key={order.orderId} className="mb-8 border rounded-lg shadow p-6 bg-white">
+        <div
+          key={order.orderId}
+          className="mb-8 border rounded-lg shadow p-6 bg-white"
+        >
           <div className="mb-4 flex justify-between items-center">
-            <h2 className="font-bold text-lg">Order #{order.orderId}</h2>
+            <h2 className="font-bold text-lg">
+              Order #{order.displayOrderNumber}
+            </h2>
             <div className="flex gap-2 items-center">
               <span
                 className={`px-3 py-1 text-sm rounded-full font-semibold ${
