@@ -93,7 +93,7 @@ Make sure you have the following installed:
 ### 2️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/your-username/munchking.git
+git clone https://github.com/bukovinszkiakos/MunchKing.git
 cd munchking
 ```
 
